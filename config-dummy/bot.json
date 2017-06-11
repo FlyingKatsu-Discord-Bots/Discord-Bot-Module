@@ -1,0 +1,10 @@
+{
+  
+  "name":   "My Bot Name",
+  "token":  "The 'App Bot User Token' created at https://discordapp.com/developers/applications/me when you make a Bot User application",
+  "id":     "The 'Client ID' created at https://discordapp.com/developers/applications/me",
+  "repo":   "A link to your public repo for anyone interested in your project",
+  "docs":   "A link to your documentation",
+  "prefix": "! (or whatever you prefer to use as default for all guilds)"
+  
+}

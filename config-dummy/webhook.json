@@ -1,0 +1,10 @@
+{
+  
+  "address": "an external URL like the one your router uses (localhost or IPs starting with 192 will not work for things like GitLab or Twitter)",
+  "port": "a TCP port number like 9000 (you may need to configure your ISP's router settings)",
+  "pfx": "required if useSSL is true and you don't have both key and cert files",
+  "key": "required if useSSL is true and you don't have a pfx",
+  "cert": "required if useSSL is true and you don't have a pfx",
+  "useSSL": "true if you want sent/received webhook data to be secure over HTTPS; else webhooks will use HTTP",
+  
+}
