@@ -1,0 +1,24 @@
+{
+  "name": "discord-bot-module",
+  "version": "0.0.0",
+  "description": "Common code used in bots by Flying Katsu, such as Mr.Prog and Discord-GitLab-Webhook",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlyingKatsy/discord-bot-module.git"
+  },
+  "author": "FlyingKatsu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FlyingKatsu/discord-bot-module/issues"
+  },
+  "homepage": "https://github.com/FlyingKatsu/discord-bot-module/issues#readme",
+  "dependencies": {
+    "discord.js": "^11.0.0",
+    "erlpack": "github:hammerandchisel/erlpack#master",
+    "pm2": "^2.4.5"
+  }
+}
