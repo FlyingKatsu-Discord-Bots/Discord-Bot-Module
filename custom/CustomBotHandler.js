@@ -8,7 +8,7 @@ class CustomBotHandler extends BotHandler {
   
   onReady() {    
     console.log("Before I'm ready!");    
-    super.ready();    
+    super.onReady();    
     console.log("After I'm ready!");    
   }
   

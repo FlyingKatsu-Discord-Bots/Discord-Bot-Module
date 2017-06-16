@@ -32,10 +32,51 @@ class DiscordBot {
   
   /* Start running everything needed for the bot */
   start() {
-    // TODO: Start up the database, if it exists
+    // Start up the database, if it was defined
+    if (this.config.database) {
+      this.database = require('then-levelup')(require('level')(this.config.database.filename, function(err,db) {
+        if (err) { console.error(err); }
+        else { console.log('Successfully created a database'); }
+      }));
+    }
     // TODO: Start up the server, if it exists
     // Log bot into Discord
     this.botClient.login(this.config.bot.token);
+  }
+  
+  /* Close up everything the bot uses, using chained promises */
+  quit() {
+    console.log("A quit was invoked");
+    return new Promise( (resolve,reject) => {
+      this.botClient.destroy()
+        .then( () => { console.log('Logged out of discord'); return this.closeServer(); } )
+        .then( () => { return this.closeDatabase(); } )
+        .then( resolve )
+        .catch( reject );
+    } );
+  }
+  closeServer() {
+    return new Promise( (resolve,reject) => {
+      if (this.server) {
+        this.server.close( function(err) {
+          if (err) { reject(err); }
+          else { console.log("Closed the server"); resolve(); }
+        } );
+      } else {
+        return resolve().catch(reject);
+      }
+    } );
+  }
+  closeDatabase() {
+    return new Promise( (resolve,reject) => {
+      if (this.database) {
+        this.database.close()
+        .then( () => { console.log('Closed the database'); return resolve(); } )
+        .catch( console.error );
+      } else {
+        return resolve().catch(reject);
+      }
+    } );
   }
   
   /* Set up database based on config settings */
@@ -114,8 +155,9 @@ class DiscordBot {
   }
   /* Set custom command references
    */
-  initCommands( custom ) {
+  initCommand( custom ) {
     // TODO
+    this.command = custom;
   }  
   
 }
