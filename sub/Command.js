@@ -34,7 +34,7 @@ class Command {
   }
   /* Deletes (or moves when API allows) the existing LABEL webhook and makes a new one in the specified channel */
   createWebhook( msg, arg, prefix ) { // create webhook label #channel|channelID|this
-    if (arg[1] != null) {
+    if (arg[1] != null && this.bot.config.guild.struct.webhook[arg[1]]) {
       let channel = (!isNaN(arg[2])) ? 
           msg.guild.channels.get(arg[2]) : (msg.mentions.channels) ?
           msg.mentions.channels.first() : msg.channel;
@@ -85,7 +85,7 @@ class Command {
       });
     } else {
       // Notify that label is not valid
-      msg.reply(`Expected argument LABEL in \`${prefix}CREATE WEBHOOK LABEL (DESTINATION_CHANNEL)\``)
+      msg.reply(`Missing or Invalid argument LABEL in \`${prefix}CREATE WEBHOOK LABEL (DESTINATION_CHANNEL)\``)
         .catch( console.error );
     }
   }
@@ -133,7 +133,7 @@ class Command {
   }
   /* Redefine the value (webhookID) for the key Guild|WebhookLabel */
   setWebhook( msg, arg, prefix ) {    
-    if ( arg[1] != null && !isNaN(arg[2]) ) {
+    if ( arg[1] != null && !isNaN(arg[2]) && this.bot.config.guild.struct.webhook[arg[1]] ) {
       let label = arg[1]; let wid = arg[2];
       // Attempt to put label-wid pair in the db
       this.bot.database.put( `G:${msg.guild.id}|W:${label}`, wid )
@@ -150,7 +150,7 @@ class Command {
         .catch( console.error );
     } else {
       // Reply that the supplied arg is invalid
-      msg.reply(`Expected arguments LABEL, HOOK_ID in \`${prefix}SET WEBHOOK LABEL HOOK_ID\``)
+      msg.reply(`Missing or Invalid arguments LABEL, HOOK_ID in \`${prefix}SET WEBHOOK LABEL HOOK_ID\``)
         .catch( console.error );
     }
   }
@@ -169,7 +169,7 @@ class Command {
   }
   /* Send a test message through the specified webhook */
   testWebhook( msg, arg, prefix ) {
-    if ( arg[1] != null ) {
+    if ( arg[1] != null  && this.bot.config.guild.struct.webhook[arg[1]] ) {
       let label = arg[1];
       // Attempt to fetch webhookID from database
       this.bot.database.get( `G:${msg.guild.id}|W:${label}` )
@@ -185,7 +185,7 @@ class Command {
         } );
     } else {
       // Reply that the supplied arg is invalid
-      msg.reply(`Expected an argument LABEL in \`${prefix}TEST WEBHOOK LABEL\``)
+      msg.reply(`Missing or Invalid argument LABEL in \`${prefix}TEST WEBHOOK LABEL\``)
         .catch( console.error );
     }
   }
