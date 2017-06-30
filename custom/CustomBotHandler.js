@@ -1,15 +1,17 @@
 const BotHandler = require('../sub/BotHandler.js');
+const PROM = require('../sub/UtilProm.js');
 
 class CustomBotHandler extends BotHandler {
   
-  constructor( bot ) {
-    super( bot );
+  constructor( _client ) {
+    super( _client );
   }
   
-  onReady() {    
-    console.log("Before I'm ready!");    
-    super.onReady();    
-    console.log("After I'm ready!");    
+  onReady() {
+    PROM.log( 'fluff', "Before I'm ready!" )
+      .then( () => { return Promise.resolve( super.onReady() ); } )
+      .then( () => { return PROM.log( 'fluff', "After I'm ready!" ); } )
+      .catch( PROM.errorHandler );    
   }
   
 }
