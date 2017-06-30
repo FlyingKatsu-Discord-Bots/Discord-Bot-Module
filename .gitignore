@@ -1,6 +1,9 @@
 # Private info
 config/
 
+# Database info
+db/
+
 # Logs
 logs
 *.log
