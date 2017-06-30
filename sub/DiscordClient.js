@@ -31,49 +31,7 @@ class DiscordClient extends Client {
   }
   
   // [SYNC] Initializations
-  initBotHandler ( custom ) {
-    // Must use Arrow Syntax to preserve the "this" inside of custom's class
-    // Connection handlers
-    this.client.on( 'ready', () => custom.onReady() );
-    this.client.on( 'disconnect', (event) => custom.onDisconnect(event) );
-    this.client.on( 'reconnecting', () => custom.onReconnecting() );
-    this.client.on( 'resume', (num) => custom.onReplayed(num) );
-    this.client.on( 'guildUnavailable', (guild) => custom.onGuildUnavailable(guild) );
-    
-    // Warn/Error handlers
-    this.client.on( 'warn', (info) => custom.onWarn(info) );
-    this.client.on( 'debug', (info) => custom.onDebug(info) );
-    this.client.on( 'error',(err) => custom.onError(err) );
-    
-    // User activity handlers
-    this.client.on( 'message', (msg) => custom.onMessage(msg) );
-    this.client.on( 'messageDelete', (msg) => custom.onMessageDelete(msg) );
-    this.client.on( 'messageUpdate', (oldMsg,newMsg) => custom.onMessageUpdate(oldMsg,newMsg) );
-    this.client.on( 'presenceUpdate', (oldMember,newMember) => custom.onPresenceUpdate(oldMember,newMember) );
-    this.client.on( 'guildMemberUpdate', (oldMember,newMember) => custom.onGuildMemberUpdate(oldMember,newMember) );
-    
-    // Admin activity handlers
-    this.client.on( 'roleCreate', (role) => custom.onRoleCreate(role) );
-    this.client.on( 'roleDelete', (role) => custom.onRoleDelete(role) );
-    this.client.on( 'roleUpdate', (oldRole,newRole) => custom.onRoleUpdate(oldRole,newRole) );
-    
-    this.client.on( 'channelCreate', (channel) => custom.onChannelCreate(channel) );
-    this.client.on( 'channelDelete', (channel) => custom.onChannelDelete(channel) );
-    this.client.on( 'channelUpdate', (oldChannel,newChannel) => custom.onChannelUpdate(oldChannel,newChannel) );
-    
-    this.client.on( 'guildCreate', (guild) => custom.onGuildCreate(guild) );
-    this.client.on( 'guildDelete', (guild) => custom.onGuildDelete(guild) );
-    this.client.on( 'guildUpdate', (oldGuild,newGuild) => custom.onGuildUpdate(oldGuild,newGuild) );
-    
-    this.client.on( 'guildMemberAdd', (member) => custom.onGuildMemberAdd(member) );
-    this.client.on( 'guildMemberRemove', (member) => custom.onGuildMemberRemove(member) );
-    
-    this.client.on( 'guilBanAdd', (guild,user) => custom.onGuildBanAdd(guild,user) );
-    this.client.on( 'guildBanRemove', (guild,user) => custom.onGuildBanRemove(guild,user) );
-    
-    // TODO add handlers for reactions, emojis
-    
-  }
+  //initBotHandler ( custom ) { super.initBotHandler(custom); }
   //initServerHandler ( _handler ) { super.initServerHandler( _handler ); }
   
   // [Thenable] Main Methods

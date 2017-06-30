@@ -25,6 +25,7 @@ class CLI extends Client {
   }
   
   // [SYNC] Initializations
+  //initBotHandler ( custom ) { super.initBotHandler(custom); }
   //initServerHandler ( _handler ) { super.initServerHandler( _handler ); }
   
   // [Thenable] Main Methods
