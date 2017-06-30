@@ -47,45 +47,45 @@ class Client {
   closeClient () { }
   
   // [SYNC]
-  initBotHandler ( custom ) {
-    // Must use Arrow Syntax to preserve the "this" inside of custom's class
+  initBotHandler ( _custom ) {
+    // Must use Arrow Syntax to preserve the "this" inside of _custom's class
     // Connection handlers
-    this.client.on( 'ready', () => custom.onReady() );
-    this.client.on( 'disconnect', (event) => custom.onDisconnect(event) );
-    this.client.on( 'reconnecting', () => custom.onReconnecting() );
-    this.client.on( 'resume', (num) => custom.onReplayed(num) );
-    this.client.on( 'guildUnavailable', (guild) => custom.onGuildUnavailable(guild) );
+    this.client.on( 'ready', () => _custom.onReady() );
+    this.client.on( 'disconnect', (event) => _custom.onDisconnect(event) );
+    this.client.on( 'reconnecting', () => _custom.onReconnecting() );
+    this.client.on( 'resume', (num) => _custom.onReplayed(num) );
+    this.client.on( 'guildUnavailable', (guild) => _custom.onGuildUnavailable(guild) );
     
     // Warn/Error handlers
-    this.client.on( 'warn', (info) => custom.onWarn(info) );
-    this.client.on( 'debug', (info) => custom.onDebug(info) );
-    this.client.on( 'error',(err) => custom.onError(err) );
+    this.client.on( 'warn', (info) => _custom.onWarn(info) );
+    this.client.on( 'debug', (info) => _custom.onDebug(info) );
+    this.client.on( 'error',(err) => _custom.onError(err) );
     
     // User activity handlers
-    this.client.on( 'message', (msg) => custom.onMessage(msg) );
-    this.client.on( 'messageDelete', (msg) => custom.onMessageDelete(msg) );
-    this.client.on( 'messageUpdate', (oldMsg,newMsg) => custom.onMessageUpdate(oldMsg,newMsg) );
-    this.client.on( 'presenceUpdate', (oldMember,newMember) => custom.onPresenceUpdate(oldMember,newMember) );
-    this.client.on( 'guildMemberUpdate', (oldMember,newMember) => custom.onGuildMemberUpdate(oldMember,newMember) );
+    this.client.on( 'message', (msg) => _custom.onMessage(msg) );
+    this.client.on( 'messageDelete', (msg) => _custom.onMessageDelete(msg) );
+    this.client.on( 'messageUpdate', (oldMsg,newMsg) => _custom.onMessageUpdate(oldMsg,newMsg) );
+    this.client.on( 'presenceUpdate', (oldMember,newMember) => _custom.onPresenceUpdate(oldMember,newMember) );
+    this.client.on( 'guildMemberUpdate', (oldMember,newMember) => _custom.onGuildMemberUpdate(oldMember,newMember) );
     
     // Admin activity handlers
-    this.client.on( 'roleCreate', (role) => custom.onRoleCreate(role) );
-    this.client.on( 'roleDelete', (role) => custom.onRoleDelete(role) );
-    this.client.on( 'roleUpdate', (oldRole,newRole) => custom.onRoleUpdate(oldRole,newRole) );
+    this.client.on( 'roleCreate', (role) => _custom.onRoleCreate(role) );
+    this.client.on( 'roleDelete', (role) => _custom.onRoleDelete(role) );
+    this.client.on( 'roleUpdate', (oldRole,newRole) => _custom.onRoleUpdate(oldRole,newRole) );
     
-    this.client.on( 'channelCreate', (channel) => custom.onChannelCreate(channel) );
-    this.client.on( 'channelDelete', (channel) => custom.onChannelDelete(channel) );
-    this.client.on( 'channelUpdate', (oldChannel,newChannel) => custom.onChannelUpdate(oldChannel,newChannel) );
+    this.client.on( 'channelCreate', (channel) => _custom.onChannelCreate(channel) );
+    this.client.on( 'channelDelete', (channel) => _custom.onChannelDelete(channel) );
+    this.client.on( 'channelUpdate', (oldChannel,newChannel) => _custom.onChannelUpdate(oldChannel,newChannel) );
     
-    this.client.on( 'guildCreate', (guild) => custom.onGuildCreate(guild) );
-    this.client.on( 'guildDelete', (guild) => custom.onGuildDelete(guild) );
-    this.client.on( 'guildUpdate', (oldGuild,newGuild) => custom.onGuildUpdate(oldGuild,newGuild) );
+    this.client.on( 'guildCreate', (guild) => _custom.onGuildCreate(guild) );
+    this.client.on( 'guildDelete', (guild) => _custom.onGuildDelete(guild) );
+    this.client.on( 'guildUpdate', (oldGuild,newGuild) => _custom.onGuildUpdate(oldGuild,newGuild) );
     
-    this.client.on( 'guildMemberAdd', (member) => custom.onGuildMemberAdd(member) );
-    this.client.on( 'guildMemberRemove', (member) => custom.onGuildMemberRemove(member) );
+    this.client.on( 'guildMemberAdd', (member) => _custom.onGuildMemberAdd(member) );
+    this.client.on( 'guildMemberRemove', (member) => _custom.onGuildMemberRemove(member) );
     
-    this.client.on( 'guilBanAdd', (guild,user) => custom.onGuildBanAdd(guild,user) );
-    this.client.on( 'guildBanRemove', (guild,user) => custom.onGuildBanRemove(guild,user) );
+    this.client.on( 'guilBanAdd', (guild,user) => _custom.onGuildBanAdd(guild,user) );
+    this.client.on( 'guildBanRemove', (guild,user) => _custom.onGuildBanRemove(guild,user) );
     
     // TODO add handlers for reactions, emojis
     
@@ -99,21 +99,22 @@ class Client {
   startDB () {
     return new Promise( (resolve, reject) => {
       if ( this.config.database ) {
-        this.createDB( this.config.database.filename )
-          .then( (err,db) => {
-            if (err) { reject( err ); }
-            else { PROM.log('core', 'Successfully created a database').then(resolve); }
-          } )
-          .catch( console.error );
+        this.initDB( this.config.database.filename, (err,db) => {
+          if (err) return reject(err);
+          else return PROM.log('core', 'Successfully created a database')
+            .then( resolve )
+            .catch( PROM.errorHandler ); 
+        } );
       } else {
         resolve();
       }
     } );
   }  
-  // [Thenable] Promiseified db create using levelDB via then-levelup
-  createDB ( filename ) {
-    return new Promise( (resolve) => require('then-levelup')(require('level')( filename, resolve )) );
+  // [SYNC] Assigns a levelup db to our client.database
+  initDB ( _filename, _handler ) {
+    this.database = require('then-levelup')( require('level')(_filename, _handler) );
   }
+  // [Thenable] Promiseified db close
   closeDB () {
     return new Promise( (resolve,reject) => {
       if (this.database) {

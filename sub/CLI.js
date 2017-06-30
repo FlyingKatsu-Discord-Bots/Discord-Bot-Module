@@ -25,8 +25,9 @@ class CLI extends Client {
   }
   
   // [SYNC] Initializations
-  //initBotHandler ( custom ) { super.initBotHandler(custom); }
+  //initBotHandler ( _custom ) { super.initBotHandler(_custom); }
   //initServerHandler ( _handler ) { super.initServerHandler( _handler ); }
+  //initDB ( _filename, _handler ) { super.initDB(_filename,_handler); }
   
   // [Thenable] Main Methods
   //start () { super.start(); }
@@ -47,7 +48,6 @@ class CLI extends Client {
   
   // [Thenable] Start Database
   //startDB () { super.startDB(); }
-  //createDB ( filename ) { super.createDB( filename ); }
   //closeDB () { super.closeDB(); }
   
   // [Thenable] Start Server
