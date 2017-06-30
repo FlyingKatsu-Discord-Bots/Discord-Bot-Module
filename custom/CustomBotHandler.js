@@ -14,6 +14,25 @@ class CustomBotHandler extends BotHandler {
       .catch( PROM.errorHandler );    
   }
   
+  processMessage( msg, config ) {
+    
+    // Auto Enlarge Emojis in short messages
+    if ( config.autoBigEmoji ) {
+      if (msg.content.length < CONFIG.maxCharsToSplit) {
+        this.client.command._processEmoji(msg);
+      }
+    } else {
+      // Check for an auto enlarge emoji command of form PREFIX<:emoji:id>
+      if ( msg.cleanContent.startsWith(config.prefix+"<:") ) {
+        this.client.command._simpleEmoji(msg,config);
+        return; // Nothing more to process
+      }
+    }
+    
+    // Process commands as usual
+    super.processMessage( msg, config );  
+  }
+  
 }
 
 module.exports = CustomBotHandler;

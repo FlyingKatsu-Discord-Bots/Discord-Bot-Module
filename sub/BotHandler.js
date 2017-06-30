@@ -55,17 +55,16 @@ class BotHandler {
     
     let guildConfig = ( msg.guild.id == this.client.config.master.guildID ) ? this.client.config.master : this.client.config.guild;
     
-    // TODO: check status of msg.guild in db, then get prefix
-    // Get the status of this bot in the db
-    /*this.client.database.get( `G:${msg.guild.id}|status` )
-      // process the status
-      .then( (status) => { this.processGuildStatus(status,msg,guildConfig); } )
-      .catch( (err) => {
-        if (err.name === "NotFoundError") {
-          // This database has not been initialized yet
-          this.initializer(msg.guild,guildConfig);
-        } else { PROM.errorHandler(err); }
-      } );*/
+    // If guild is configured, process messages; Otherwise configure it in database
+    this.client.database.get( `G:${msg.guild.id}|config` )
+      .then( 
+        (config) => { this.processMessage(msg,config); },
+        (err) => { 
+          if (err.name === "NotFoundError") { this.initializer(msg.guild,guildConfig); }
+          else { PROM.errorHandler(err); }
+        }
+      )
+      .catch( PROM.errorHandler );
   }
   onMessageDelete( msg ) {  }
   onMessageUpdate( oldMsg, newMsg ) {  }
@@ -159,6 +158,11 @@ class BotHandler {
   }
   
   initializer( guild, config ) {
+    
+    // Add guild to database
+    this.client.database.put(`G:${guild.id}|config`, config.configurable)
+      .then( () => { PROM.log('core', 'Added guild to db') } )
+      .catch( PROM.errorHandler );
     
     // Create an admin-only, bot-only channel for managing the bot
     

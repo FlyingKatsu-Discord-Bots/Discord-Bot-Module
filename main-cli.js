@@ -6,7 +6,7 @@ const PROM = require('./sub/UtilProm.js');
 // Get customizations for this bot
 const BotHandler = require('./custom/CustomBotHandler.js');
 // Custom Commands
-const Command = require('./sub/Command.js');
+const Command = require('./custom/CustomCommand.js');
 
 // Define/Load config data here
 const Constants = require('./sub/Constants.js');
@@ -20,6 +20,8 @@ const Config = {
 
 // Bot Setup stuff
 const ExampleBot = new CLI( Config, Constants );
+// Set up the Discord.js event handlers
+ExampleBot.initBotHandler( new BotHandler(ExampleBot) );
 // Set up custom commands
 ExampleBot.command = new Command(ExampleBot);
 
