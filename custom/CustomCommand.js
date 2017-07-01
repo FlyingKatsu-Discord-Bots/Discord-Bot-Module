@@ -47,7 +47,8 @@ class CustomCommand extends Command {
             (emoji) => resolve(emoji.url),
             (err) => { 
               // Skip over invalid keys
-              if (err.message != "No such key") PROM.errorHandler(err); 
+              if (err.message != "No such key") { PROM.errorHandler(err); }
+              else { resolve(); }
             }
           )
           .catch( PROM.errorHandler ); 
