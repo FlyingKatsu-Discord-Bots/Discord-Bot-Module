@@ -19,13 +19,13 @@ class CustomBotHandler extends BotHandler {
     PROM.log('fluff', config);
     
     // Auto Enlarge Emojis in short messages
-    if ( config.autoBigEmoji ) {
-      if (msg.content.length < config.maxCharsToSplit) {
+    if ( config.autoBigEmoji.data ) {
+      if (msg.content.length < config.maxCharsToSplit.data) {
         this.client.command._processEmoji(msg,config);
       }
     } else {
       // Check for an auto enlarge emoji command of form PREFIX<:emoji:id>
-      if ( msg.cleanContent.startsWith(config.prefix+"<:") ) {
+      if ( msg.cleanContent.startsWith(config.prefix.data+"<:") ) {
         this.client.command._simpleEmoji(msg,config);
         return; // Nothing more to process
       }

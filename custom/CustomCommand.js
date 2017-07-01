@@ -60,7 +60,7 @@ class CustomCommand extends Command {
   // [Internal] [SYNC] Simple emoji replacement: send emoji as file embed then delete source message
   // Assumes message is of the form 'PREFIX<:emoji:id>'
   _simpleEmoji( msg, config ) {
-    let word = msg.cleanContent.substr(config.prefix.length).trim();
+    let word = msg.cleanContent.substr(config.prefix.data.length).trim();
     let id = word.substring( word.lastIndexOf(":")+1, word.indexOf(">") );
     let emoji = msg.guild.emojis.get(id);
     if (emoji) {

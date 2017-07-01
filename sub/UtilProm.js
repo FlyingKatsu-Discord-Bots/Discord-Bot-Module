@@ -63,6 +63,25 @@ const Prom = {
     return Promise.resolve( Prom.debug[lvl](msg) );
   },
   
+  // [SYNC] 
+  convertType: {
+    string: (v) => { 
+      return (typeof v === "string") ? v : v.toString(); 
+    },
+    number: (v) => { 
+      return (typeof v === "number") ? v : Number(v); 
+    },
+    boolean: (v) => { 
+      if (typeof v === "boolean") { return v; }
+      else if (typeof v === "string") { 
+        let n = Number(v);
+        if ( isNaN(n) ) { return v.toLowerCase() === "true"; }
+        else { return Boolean(n); }
+      }
+      else { return Boolean(v); } // number, object, array, null, undefined
+    }
+  },
+  
   // [SYNC]
   errorHandler: ( err ) => {
     // Handle DiscordAPIErrors

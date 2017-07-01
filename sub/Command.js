@@ -22,13 +22,41 @@ class Command {
   }
   
   config( msg, arg, config ) {
-    PROM.log('fluff', `set config[${arg[0]}] = ${arg[1]}`);
-    if ( arg[1] && config.hasOwnProperty(arg[0]) ) {
-      config[arg[0]] = arg[1];
-      PROM.log('fluff', `accessing db...`);
-      this.client.database.put( `G:${msg.guild.id}|config`, config, { valueEncoding:'json' } )
-        .then( () => { return msg.channel.send(`set config[${arg[0]}] = ${arg[1]}`); } )
+    let key = arg[0] || null;
+    let db_val, val = arg[1] || "default";    
+    if ( val && config.hasOwnProperty(key) ) {
+      
+      // If requested val is default, fetch default value from config
+      if (val.toLowerCase() === "default") {
+        let guildConfig = (msg.guild.id === this.client.config.master.guildID) ?
+          this.client.config.master : this.client.config.guild;
+        db_val = guildConfig.configurable[key].data;
+        
+      // Else convert val string to its intended type
+      } else {
+        db_val = PROM.convertType[ config[key].type ](val);
+      }
+      
+      if ( typeof db_val === config[key].type && !isNaN(db_val) ) {
+        // Store this data
+        config[key].data = db_val;
+        this.client.database.put( `G:${msg.guild.id}|config`, config,
+                                 { valueEncoding:'json' } )
+        .then( () => msg.channel.send(`set config[${key}] = ${db_val}`) )
         .catch( PROM.errorHandler );
+        
+      } else { // Report UserInputError
+        PROM.errorHandler( { 
+          name:"UserInputError", 
+          message:`CONFIG[${key}] expects value of type ${config[key].type}, but received ${val} -> ${db_val} instead...` 
+        } );
+      }
+      
+    } else { // Report ArgumentError
+      PROM.errorHandler( { 
+        name:"ArgumentError", 
+        message:`CONFIG expects two arguments, but received ${arg.length} instead...` 
+      } );
     }
   }
   
