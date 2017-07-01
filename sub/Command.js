@@ -1,7 +1,9 @@
+const PROM = require('../sub/UtilProm.js');
+
 class Command {
   
-  constructor( bot ) {
-    this.bot = bot; 
+  constructor( _client ) {
+    this.client = _client; 
     this.protoObj = Object.getPrototypeOf( this );
   }
   
@@ -13,10 +15,21 @@ class Command {
     return this.protoObj.hasOwnProperty(cmd);
   }
   
-  ping( msg, arg, prefix ) { 
+  ping( msg, arg, config ) { 
     msg.channel.send('pong')
       //.then()
       .catch( console.error );
+  }
+  
+  config( msg, arg, config ) {
+    PROM.log('fluff', `set config[${arg[0]}] = ${arg[1]}`);
+    if ( arg[1] && config.hasOwnProperty(arg[0]) ) {
+      config[arg[0]] = arg[1];
+      PROM.log('fluff', `accessing db...`);
+      this.client.database.put( `G:${msg.guild.id}|config`, config, { valueEncoding:'json' } )
+        .then( () => { return msg.channel.send(`set config[${arg[0]}] = ${arg[1]}`); } )
+        .catch( PROM.errorHandler );
+    }
   }
   
   official( msg, arg, prefix ) {

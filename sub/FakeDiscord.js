@@ -16,7 +16,7 @@ class Client extends EventEmitter {
       //process.stdin.resume(); // old streams are paused by default
       process.stdin.setEncoding('utf8');
       process.stdin.on('data', (text) => {
-        console.log(`Received data ${util.inspect(text)}`);
+        //console.log(`Received data ${util.inspect(text)}`);
         
         if ( text.startsWith('msg ') ) {
           

@@ -204,17 +204,16 @@ class BotHandler {
      !TEST
   */
   processMessage( msg, config ){
-    let cleanedMsg = msg.content.trim().toLowerCase();
+    let cleanedMsg = msg.content.trim();
     // Only read messages starting with command prefix
     if (cleanedMsg.startsWith(config.prefix)) {
       // Parse out the command from message args
       let [cmd, ...arg] = cleanedMsg.substr(config.prefix.length).trim().split(" ");
-      PROM.log( 'fluff', `Received cmd: ${cmd}` );
       // Only process command if it is recognized
       // TODO: check role/commandsets for restricted command actions
-      if ( this.client.command._hasMethod(cmd) ) {
-        PROM.log( 'fluff', `Processing comand!` );
-        this.client.command[cmd](msg, arg, config.prefix);
+      cmd = cmd.toLowerCase();
+      if ( this.client.command._hasMethod( cmd ) ) {
+        this.client.command[cmd](msg, arg, config);
       }
     }
     // TODO: consider inline commands for reaction images or mentioning bot entities
