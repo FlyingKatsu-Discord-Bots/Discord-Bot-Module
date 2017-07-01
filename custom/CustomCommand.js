@@ -21,10 +21,7 @@ class CustomCommand extends Command {
   // [Internal] [Promise] Split the message up and check each word for <:emoji:id>, then send that emoji as a file embed
   _processEmoji( msg, config ) {
     // Split up msg
-    let splitMsg = msg.cleanContent
-      .substr(config.prefix.length).trim() // remove prefix and extra space
-      .toLowerCase()
-      .split(" "); 
+    let splitMsg = msg.cleanContent.toLowerCase().split(" "); 
     // Check each word for an emoji id and save the URL if the id is valid
     return Promise.all( splitMsg.map( (word) => {
       return this._getEmojiFromWord(word, msg.guild.emojis);
@@ -32,32 +29,31 @@ class CustomCommand extends Command {
       // Filter out bad results
       .then( PROM.filterUndef )
       // Send emoji URLs, if any
-      .then( (emojiURLs) => { 
-        PROM.sendFiles(msg.channel, emojiURLs)
-        .catch( (err) => {
-          if (err.msg == 'No files to send') { return; }
-          else { PROM.errorHandler }
-        } ); } )
-      .catch( PROM.errorHandler );
+      .then( (emojiURLs) => PROM.sendFiles(msg.channel, emojiURLs) )
+      .catch( (err) => {
+        // Silently pass empty message
+        if (err.message != "No files to send") { PROM.errorHandler(err); }
+      } );
   }
   // [Internal] [Promise] Given a word, find an emoji ID and if exists, return its url
   // Silently continues chain if no ID is found or if ID is invalid
   _getEmojiFromWord( word, emojis ) {
     return new Promise( (resolve,reject) => {
-      if ( word.startsWith("<") && word.endsWith(">") ) {
-        // Get the snowflake after :phrase: and before >
-        let id = word.substring( word.lastIndexOf(":")+1, word.indexOf(">") );
-        if (id != "") { 
-          PROM.getFromCollection(id,emojis)
-            .then( (emoji) => { resolve(emoji.url); },
-                   // skip if fail
-                   (err) => { resolve(); } 
-                 )
-            .catch( PROM.errorHandler ); 
-        } 
-        //else { reject("Missing ID for Emoji"); }
-        else { resolve(); }
-      } else { resolve(); }
+      // Get the snowflake after :phrase: and before >
+      let id = word.substring( word.lastIndexOf(":")+1, word.indexOf(">") );
+      if (id != "") { 
+        PROM.getFromCollection(id,emojis)
+          .then( 
+            (emoji) => resolve(emoji.url),
+            (err) => { 
+              // Skip over invalid keys
+              if (err.message != "No such key") PROM.errorHandler(err); 
+            }
+          )
+          .catch( PROM.errorHandler ); 
+      } 
+      //else { reject("Missing ID for Emoji"); }
+      else { resolve(); } // skip over invalid IDs
     } );
   }  
   // [Internal] [SYNC] Simple emoji replacement: send emoji as file embed then delete source message
