@@ -7,9 +7,19 @@ class CustomCommand extends Command {
     super( _client );
   }
   
+  _listMethods() {
+    return Object.getOwnPropertyNames( this.protoObj )
+      .concat( Object.getOwnPropertyNames( Object.getPrototypeOf( this.protoObj ) ) );
+  }
+  
+  _hasMethod(cmd) {
+    return this.protoObj.hasOwnProperty(cmd) ||
+      Object.getPrototypeOf(this.protoObj).hasOwnProperty(cmd);
+  }
+  
   
   // [Internal] [Promise] Split the message up and check each word for <:emoji:id>, then send that emoji as a file embed
-  _processEmoji( msg ) {
+  _processEmoji( msg, config ) {
     // Split up msg
     let splitMsg = msg.cleanContent
       .substr(config.prefix.length).trim() // remove prefix and extra space
@@ -22,7 +32,12 @@ class CustomCommand extends Command {
       // Filter out bad results
       .then( PROM.filterUndef )
       // Send emoji URLs, if any
-      .then( emojiURLs => PROM.sendFiles(msg.channel, emojiURLs) )
+      .then( (emojiURLs) => { 
+        PROM.sendFiles(msg.channel, emojiURLs)
+        .catch( (err) => {
+          if (err.msg == 'No files to send') { return; }
+          else { PROM.errorHandler }
+        } ); } )
       .catch( PROM.errorHandler );
   }
   // [Internal] [Promise] Given a word, find an emoji ID and if exists, return its url
@@ -34,7 +49,10 @@ class CustomCommand extends Command {
         let id = word.substring( word.lastIndexOf(":")+1, word.indexOf(">") );
         if (id != "") { 
           PROM.getFromCollection(id,emojis)
-            .then( (emoji) => resolve(emoji.url) )
+            .then( (emoji) => { resolve(emoji.url); },
+                   // skip if fail
+                   (err) => { resolve(); } 
+                 )
             .catch( PROM.errorHandler ); 
         } 
         //else { reject("Missing ID for Emoji"); }
@@ -49,7 +67,7 @@ class CustomCommand extends Command {
     let id = word.substring( word.lastIndexOf(":")+1, word.indexOf(">") );
     let emoji = msg.guild.emojis.get(id);
     if (emoji) {
-      msg.channel.send( '', { files: [emoji.url] } )
+      PROM.sendFiles(msg.channel, [emoji.url])
         .then( (m) => { return msg.delete(); } )
         .catch( PROM.errorHandler );
     }

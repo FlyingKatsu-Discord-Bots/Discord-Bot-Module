@@ -1,7 +1,16 @@
 class Command {
   
   constructor( bot ) {
-    this.bot = bot;    
+    this.bot = bot; 
+    this.protoObj = Object.getPrototypeOf( this );
+  }
+  
+  _listMethods() {
+    return Object.getOwnPropertyNames( this.protoObj );
+  }
+  
+  _hasMethod(cmd) {
+    return this.protoObj.hasOwnProperty(cmd);
   }
   
   ping( msg, arg, prefix ) { 

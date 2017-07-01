@@ -56,7 +56,7 @@ class BotHandler {
     let guildConfig = ( msg.guild.id == this.client.config.master.guildID ) ? this.client.config.master : this.client.config.guild;
     
     // If guild is configured, process messages; Otherwise configure it in database
-    this.client.database.get( `G:${msg.guild.id}|config` )
+    this.client.database.get( `G:${msg.guild.id}|config`, {valueEncoding:'json'} )
       .then( 
         (config) => { this.processMessage(msg,config); },
         (err) => { 
@@ -160,7 +160,7 @@ class BotHandler {
   initializer( guild, config ) {
     
     // Add guild to database
-    this.client.database.put(`G:${guild.id}|config`, config.configurable)
+    this.client.database.put(`G:${guild.id}|config`, config.configurable, {valueEncoding:'json'})
       .then( () => { PROM.log('core', 'Added guild to db') } )
       .catch( PROM.errorHandler );
     
@@ -204,15 +204,17 @@ class BotHandler {
      !TEST
   */
   processMessage( msg, config ){
+    let cleanedMsg = msg.content.trim().toLowerCase();
     // Only read messages starting with command prefix
-    if (msg.content.startsWith(config.bot.prefix)) {
+    if (cleanedMsg.startsWith(config.prefix)) {
       // Parse out the command from message args
-      let [cmd, ...arg] = msg.content.substring(config.bot.prefix.length).toLowerCase().split(" ");
+      let [cmd, ...arg] = cleanedMsg.substr(config.prefix.length).trim().split(" ");
       PROM.log( 'fluff', `Received cmd: ${cmd}` );
       // Only process command if it is recognized
       // TODO: check role/commandsets for restricted command actions
-      if ( Object.getPrototypeOf(this.client.command).hasOwnProperty(cmd) ) {
-        this.client.command[cmd](msg, arg, prefix);
+      if ( this.client.command._hasMethod(cmd) ) {
+        PROM.log( 'fluff', `Processing comand!` );
+        this.client.command[cmd](msg, arg, config.prefix);
       }
     }
     // TODO: consider inline commands for reaction images or mentioning bot entities
