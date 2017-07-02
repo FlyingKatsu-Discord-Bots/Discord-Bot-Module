@@ -24,7 +24,7 @@ class Command {
   config( msg, arg, config ) {
     let key = arg[0] || null;
     let db_val, val = arg[1] || "default";    
-    if ( val && config.hasOwnProperty(key) ) {
+    if ( config.hasOwnProperty(key) ) {
       
       // If requested val is default, fetch default value from config
       if (val.toLowerCase() === "default") {
@@ -45,18 +45,18 @@ class Command {
         .then( () => msg.channel.send(`set config[${key}] = ${db_val}`) )
         .catch( PROM.errorHandler );
         
-      } else { // Report UserInputError
-        PROM.errorHandler( { 
-          name:"UserInputError", 
-          message:`CONFIG[${key}] expects value of type ${config[key].type}, but received ${val} -> ${db_val} instead...` 
+      } else { // Report invalid input
+        PROM.sendUserError.InvalidInput( msg.channel, msg.author, { 
+          cmd: 'CONFIG',  
+          key: key,  
+          type: config[key].type,  
+          val: val,
+          valType: db_val 
         } );
       }
       
-    } else { // Report ArgumentError
-      PROM.errorHandler( { 
-        name:"ArgumentError", 
-        message:`CONFIG expects two arguments, but received ${arg.length} instead...` 
-      } );
+    } else { // Could not find the key, so show the user available info
+      PROM.sendCode( msg.channel, msg.author, JSON.stringify(config,null,2) );
     }
   }
   

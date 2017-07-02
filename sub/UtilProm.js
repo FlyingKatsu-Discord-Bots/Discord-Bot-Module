@@ -82,6 +82,25 @@ const Prom = {
     }
   },
   
+  // Returns a promise resolution
+  // Send an error to a channel or through webhook
+  sendUserError: {
+    MissingArgs: ( channel, user, data )=>{
+      return channel.send( `${user} ${data.cmd} expects ${data.numExp} arguments, but received ${data.num} instead...` )
+      .catch(Prom.errorHandler);
+    },
+    InvalidInput: ( channel, user, data )=>{
+      return channel.send( `${user} ${data.cmd} ${data.key} expects value of type ${data.type}, but received ${data.val} -> ${data.valType} instead...` )
+      .catch(Prom.errorHandler);
+    }
+  },
+  
+  sendCode: (channel, user, code) => {
+    let tags = "```";
+    return channel.send(`${user}\n${tags}\n${code}\n${tags}`)
+      .catch(Prom.errorHandler);
+  },
+  
   // [SYNC]
   errorHandler: ( err ) => {
     // Handle DiscordAPIErrors

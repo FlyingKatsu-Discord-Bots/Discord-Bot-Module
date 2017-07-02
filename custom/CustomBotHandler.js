@@ -16,8 +16,6 @@ class CustomBotHandler extends BotHandler {
   
   processMessage( msg, config ) {
     
-    PROM.log('fluff', config);
-    
     // Auto Enlarge Emojis in short messages
     if ( config.autoBigEmoji.data ) {
       if (msg.content.length < config.maxCharsToSplit.data) {

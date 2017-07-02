@@ -32,7 +32,9 @@ class Client extends EventEmitter {
                 if (opt.files) console.log("Files: ", opt.files);
                 return Promise.resolve({content:txt, delete:()=>{console.log('deleted!')}});
               } },
-            author: { id: '2222222222222', bot: false, username: 'FakeUser', tag:'1234' },
+            author: { id: '2222222222222', bot: false, username: 'FakeUser', tag:'1234',
+            toString: ()=>{ return '@FakeUser#1234'; }
+            },
             member: { id: '1111111111111',  nickname:'Member' },
             guild: { id: '3333333333333', emojis: _emojis },
             mentions: {
