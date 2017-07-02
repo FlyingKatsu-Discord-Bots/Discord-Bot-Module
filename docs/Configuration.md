@@ -1,11 +1,11 @@
 # Configuration
 
 ## Table of Contents
-- [Guild](#Guild) - Required
-- [Database](#Database) - Required
-- [Bot](#Bot) - Required for Discord (but not for command line tests)
-- [Master Guild](#Master-Guild) - Optional
-- [Server](#Server) - Optional
+- [Guild](#guild) - Required
+- [Database](#database) - Required
+- [Bot](#bot) - Required for Discord (but not for command line tests)
+- [Master Guild](#master-guild) - Optional
+- [Server](#server) - Optional
 
 ## Guild
 [REQUIRED]
@@ -50,7 +50,7 @@ The data needed to login to Discord, using info from Discord Developers page.  T
 ## Master Guild
 [OPTIONAL]
 
-The data needed to configure a master developer guild.  This is the guild that allows the bot master to control who can use their hosted bot, and is a good place to post bot updates and provide help.  Much of the data in this config mirrors that of [Guild](#Guild) config, with the exception of a master guildID and a master userID (helpful for troubleshooting the bot in other guilds).
+The data needed to configure a master developer guild.  This is the guild that allows the bot master to control who can use their hosted bot, and is a good place to post bot updates and provide help.  Much of the data in this config mirrors that of [Guild](#guild) config, with the exception of a master guildID and a master userID (helpful for troubleshooting the bot in other guilds).
 ```json
 {
   "guildID": "Your master guild's Discord ID",
