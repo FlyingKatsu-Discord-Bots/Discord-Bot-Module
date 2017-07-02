@@ -17,13 +17,13 @@ class CustomBotHandler extends BotHandler {
   processMessage( msg, config ) {
     
     // Auto Enlarge Emojis in short messages
-    if ( config.autoBigEmoji.data ) {
-      if (msg.content.length < config.maxCharsToSplit.data) {
+    if ( config.autoBigEmoji.value ) {
+      if (msg.content.length < config.maxCharsToSplit.value) {
         this.client.command._processEmoji(msg,config);
       }
     } else {
       // Check for an auto enlarge emoji command of form PREFIX<:emoji:id>
-      if ( msg.cleanContent.startsWith(config.prefix.data+"<:") ) {
+      if ( msg.cleanContent.startsWith(config.prefix.value+"<:") ) {
         this.client.command._simpleEmoji(msg,config);
         return; // Nothing more to process
       }

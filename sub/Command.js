@@ -33,7 +33,7 @@ class Command {
         if (val.toLowerCase() === "default") {
           let guildConfig = (msg.guild.id === this.client.config.master.guildID) ?
             this.client.config.master : this.client.config.guild;
-          db_val = guildConfig.configurable[key].data;
+          db_val = guildConfig.configurable[key].value;
 
         // Else convert val string to its intended type
         } else {
@@ -45,15 +45,15 @@ class Command {
         if ( typeof db_val === config[key].type && numberCheck ) {
           
           // Store this data
-          config[key].data = db_val;
+          config[key].value = db_val;
           this.client.database.put( `G:${msg.guild.id}|config`, config,
                                    { valueEncoding:'json' } )
-          .then( () => msg.channel.send(`set config[${key}] = ${db_val}`) )
+          .then( () => msg.channel.send(`${msg.author} set config.${key} = ${db_val}`) )
           .catch( PROM.errorHandler );
 
         } else { // Report invalid input
           PROM.sendUserError.InvalidInput( msg.channel, msg.author, { 
-            cmd: `${config.prefix.data}CONFIG ${key} value`,
+            cmd: `${config.prefix.value}CONFIG ${key} value`,
             type: config[key].type,  
             val: val,
             valType: db_val 
@@ -61,7 +61,7 @@ class Command {
         }
       } else { // Report invalid key
         PROM.sendUserError.InvalidKey( msg.channel, msg.author, { 
-            cmd: `${config.prefix.data}CONFIG keyword value`,  
+            cmd: `${config.prefix.value}CONFIG keyword value`,  
             key: key,
             keywords: Object.keys(config)
           } );

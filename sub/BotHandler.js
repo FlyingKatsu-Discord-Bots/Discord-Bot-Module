@@ -206,9 +206,9 @@ class BotHandler {
   processMessage( msg, config ){
     let cleanedMsg = msg.content.trim();
     // Only read messages starting with command prefix
-    if (cleanedMsg.startsWith(config.prefix.data)) {
+    if (cleanedMsg.startsWith(config.prefix.value)) {
       // Parse out the command from message args
-      let [cmd, ...arg] = cleanedMsg.substr(config.prefix.data.length).trim().split(" ");
+      let [cmd, ...arg] = cleanedMsg.substr(config.prefix.value.length).trim().split(" ");
       // Only process command if it is recognized
       // TODO: check role/commandsets for restricted command actions
       cmd = cmd.toLowerCase();
