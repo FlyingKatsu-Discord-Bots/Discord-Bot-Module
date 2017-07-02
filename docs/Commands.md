@@ -1,5 +1,9 @@
 # Commands
 
+## Table of Contents
+- [Ping](#ping)
+- [Config](#config)
+
 ## Ping
 
 ### `prefix PING`
@@ -39,9 +43,7 @@ If the keyword does not exist in config data, the bot will instead reply with an
 
 > Please use one of the following keywords instead:
 
-> ```
-prefix | autoBigEmoji | keyword
-```
+> ```prefix | autoBigEmoji | keyword```
 
 ### `prefix CONFIG keyword value`
 The bot will set CONFIG.keyword to the provided value, if the value matches the intended data type.
