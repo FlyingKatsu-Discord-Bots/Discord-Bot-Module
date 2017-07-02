@@ -53,7 +53,7 @@ class Command {
 
         } else { // Report invalid input
           PROM.sendUserError.InvalidInput( msg.channel, msg.author, { 
-            cmd: `${config.prefix.value}CONFIG ${key} value`,
+            cmd: `${config.prefix.value} CONFIG ${key} value`,
             type: config[key].type,  
             val: val,
             valType: db_val 
@@ -61,7 +61,7 @@ class Command {
         }
       } else { // Report invalid key
         PROM.sendUserError.InvalidKey( msg.channel, msg.author, { 
-            cmd: `${config.prefix.value}CONFIG keyword value`,  
+            cmd: `${config.prefix.value} CONFIG keyword value`,  
             key: key,
             keywords: Object.keys(config)
           } );
