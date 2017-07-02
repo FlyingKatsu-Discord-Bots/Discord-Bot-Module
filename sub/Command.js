@@ -23,40 +23,49 @@ class Command {
   
   config( msg, arg, config ) {
     let key = arg[0] || null;
-    let db_val, val = arg[1] || "default";    
-    if ( config.hasOwnProperty(key) ) {
-      
-      // If requested val is default, fetch default value from config
-      if (val.toLowerCase() === "default") {
-        let guildConfig = (msg.guild.id === this.client.config.master.guildID) ?
-          this.client.config.master : this.client.config.guild;
-        db_val = guildConfig.configurable[key].data;
+    let db_val, val = arg[1] || "default";
+    
+    if (!key) { // Jyst show the user the config data
+      PROM.sendCode( msg.channel, msg.author, JSON.stringify(config,null,2), 'json' );
+    } else {
+      if ( config.hasOwnProperty(key) ) {
+        // If requested val is default, fetch default value from config
+        if (val.toLowerCase() === "default") {
+          let guildConfig = (msg.guild.id === this.client.config.master.guildID) ?
+            this.client.config.master : this.client.config.guild;
+          db_val = guildConfig.configurable[key].data;
+
+        // Else convert val string to its intended type
+        } else {
+          db_val = PROM.convertType[ config[key].type ](val);
+        }
         
-      // Else convert val string to its intended type
-      } else {
-        db_val = PROM.convertType[ config[key].type ](val);
+        // Verify converted data
+        let numberCheck = (config[key].type=="number") ? !isNaN(db_val) : true;
+        if ( typeof db_val === config[key].type && numberCheck ) {
+          
+          // Store this data
+          config[key].data = db_val;
+          this.client.database.put( `G:${msg.guild.id}|config`, config,
+                                   { valueEncoding:'json' } )
+          .then( () => msg.channel.send(`set config[${key}] = ${db_val}`) )
+          .catch( PROM.errorHandler );
+
+        } else { // Report invalid input
+          PROM.sendUserError.InvalidInput( msg.channel, msg.author, { 
+            cmd: `${config.prefix.data}CONFIG ${key} value`,
+            type: config[key].type,  
+            val: val,
+            valType: db_val 
+          } );
+        }
+      } else { // Report invalid key
+        PROM.sendUserError.InvalidKey( msg.channel, msg.author, { 
+            cmd: `${config.prefix.data}CONFIG keyword value`,  
+            key: key,
+            keywords: Object.keys(config)
+          } );
       }
-      
-      if ( typeof db_val === config[key].type && !isNaN(db_val) ) {
-        // Store this data
-        config[key].data = db_val;
-        this.client.database.put( `G:${msg.guild.id}|config`, config,
-                                 { valueEncoding:'json' } )
-        .then( () => msg.channel.send(`set config[${key}] = ${db_val}`) )
-        .catch( PROM.errorHandler );
-        
-      } else { // Report invalid input
-        PROM.sendUserError.InvalidInput( msg.channel, msg.author, { 
-          cmd: 'CONFIG',  
-          key: key,  
-          type: config[key].type,  
-          val: val,
-          valType: db_val 
-        } );
-      }
-      
-    } else { // Could not find the key, so show the user available info
-      PROM.sendCode( msg.channel, msg.author, JSON.stringify(config,null,2) );
     }
   }
   

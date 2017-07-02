@@ -89,15 +89,20 @@ const Prom = {
       return channel.send( `${user} ${data.cmd} expects ${data.numExp} arguments, but received ${data.num} instead...` )
       .catch(Prom.errorHandler);
     },
+    InvalidKey: ( channel, user, data )=>{
+      let tags = "```";
+      return channel.send( `${user} \`${data.key}\` is not a valid \`keyword\` for \`${data.cmd}\`\nPlease use one of the following keywords instead:\n${tags}\n${data.keywords.join(' | ')}\n${tags}` )
+      .catch(Prom.errorHandler);
+    },
     InvalidInput: ( channel, user, data )=>{
-      return channel.send( `${user} ${data.cmd} ${data.key} expects value of type ${data.type}, but received ${data.val} -> ${data.valType} instead...` )
+      return channel.send( `${user} \`${data.cmd}\` expects a \`value\` of type \`${data.type}\`, but received \`${data.val}\` of type \`${data.valType}\` instead...` )
       .catch(Prom.errorHandler);
     }
   },
   
-  sendCode: (channel, user, code) => {
+  sendCode: (channel, user, code, lang) => {
     let tags = "```";
-    return channel.send(`${user}\n${tags}\n${code}\n${tags}`)
+    return channel.send(`${user}\n${tags}${lang}\n${code}\n${tags}`)
       .catch(Prom.errorHandler);
   },
   
